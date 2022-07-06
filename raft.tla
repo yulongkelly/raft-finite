@@ -465,6 +465,9 @@ Next == /\ \/ \E i \in Server : Timeout(i)
            \* History variable that tracks every log ever:
 \*        /\ allLogs' = allLogs \cup {log[i] : i \in Server}
 \*        /\ behaviorLength' = behaviorLength + 1
+\*        /\ ~\E i \in Server : currentTerm[i] > 10
+\*        /\ ~\E i \in Server : Len(log[i]) > 2
+\*        /\ ~\E m \in DOMAIN messages: messages[m] > 10
 
         
         
