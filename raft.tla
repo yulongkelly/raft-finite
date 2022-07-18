@@ -451,6 +451,12 @@ DropMessage(m) ==
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 ----
+CurrTermConstrain == \A i \in Server : currentTerm[i] < 3
+
+LogLenConstrain == \A i \in Server : Len(log[i]) < 1
+
+DuplicateMessConstrain == \A m \in DOMAIN messages: messages[m] < 2
+
 \* Defines how the variables may transition.
 Next == /\ \/ \E i \in Server : Timeout(i)
            \/ \E i \in Server : Restart(i)
@@ -465,11 +471,9 @@ Next == /\ \/ \E i \in Server : Timeout(i)
            \* History variable that tracks every log ever:
 \*        /\ allLogs' = allLogs \cup {log[i] : i \in Server}
 \*        /\ behaviorLength' = behaviorLength + 1
-\*        /\ ~\E i \in Server : currentTerm[i] > 10
-\*        /\ ~\E i \in Server : Len(log[i]) > 2
-\*        /\ ~\E m \in DOMAIN messages: messages[m] > 10
-
-        
+        /\ CurrTermConstrain
+        /\ LogLenConstrain
+        /\ DuplicateMessConstrain
         
 \* The specification must start with the initial state and transition according
 \* to Next.
