@@ -459,15 +459,15 @@ DuplicateMessConstrain == \A m \in DOMAIN messages: messages[m] < 2
 
 \* Defines how the variables may transition.
 Next == /\ \/ \E i \in Server : Timeout(i)
-           \/ \E i \in Server : Restart(i)
-           \/ \E i,j \in Server : RequestVote(i, j)
-           \/ \E i \in Server : BecomeLeader(i)
-           \/ \E i \in Server, v \in Value : ClientRequest(i, v)
-           \/ \E i \in Server : AdvanceCommitIndex(i)
-           \/ \E i,j \in Server : AppendEntries(i, j)
-           \/ \E m \in DOMAIN messages : Receive(m)
-           \/ \E m \in DOMAIN messages : DuplicateMessage(m)
-           \/ \E m \in DOMAIN messages : DropMessage(m)
+           \/ \E i \in Server : Restart(i) 
+           \/ \E i,j \in Server : RequestVote(i, j) \* candidate
+           \/ \E i \in Server : BecomeLeader(i) \* candidate; votesGranted
+           \/ \E i \in Server, v \in Value : ClientRequest(i, v) \* i must be leader; |log[i]| increase by 1
+           \/ \E i \in Server : AdvanceCommitIndex(i) \* i must be leader; not change for |server| = 1
+           \/ \E i,j \in Server : AppendEntries(i, j) \* i must be leader; i != j
+\*           \/ \E m \in DOMAIN messages : Receive(m)
+\*           \/ \E m \in DOMAIN messages : DuplicateMessage(m)
+\*           \/ \E m \in DOMAIN messages : DropMessage(m)
            \* History variable that tracks every log ever:
 \*        /\ allLogs' = allLogs \cup {log[i] : i \in Server}
 \*        /\ behaviorLength' = behaviorLength + 1
